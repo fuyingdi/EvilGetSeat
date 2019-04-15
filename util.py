@@ -6,12 +6,12 @@ import requests
 import json
 import pprint
 import time
+import sys
 
 
 user_id = '160104010116'
 password = '124563'
 
-room_id = ''
 date = ''
 resv_id = ''
 
@@ -27,7 +27,8 @@ get_resvid_url = 'http://seat.ysu.edu.cn/ClientWeb/pro/ajax/reserve.aspx?' \
                  'stat_flag=9&act=get_my_resv&_nocache=1531801794371'
 
 get_room_status_url = 'http://seat.ysu.edu.cn/ClientWeb/pro/ajax/device.aspx?' \
-                      'room_id={}&date={}'.format(room_id, date)
+                      'room_id={}&date={}&act=get_rsv_sta' \
+                      '&fr_start={}&fr_end={}&_nocache=1534047543589'
 
 del_resv_url = 'http://seat.ysu.edu.cn/ClientWeb/pro/ajax/reserve.aspx?' \
              'act=del_resv&id={}&_nocache=1531823241100' #.format(del_resv_id)
@@ -77,9 +78,9 @@ def get_resv_info():
 
 
 # 占座
-def occupy(start_time, end_time):
+def occupy(seat_id, start_time, end_time):
     resv_id = ''
-    dev_id = '101439235'
+    dev_id = seat_id
     lab_id = ''
     # start = '2019-04-14 15:30'
     start = time.strftime("%Y-%m-%d", time.localtime()) + " " + start_time
@@ -104,7 +105,40 @@ def delet_seat():
         print("重新登陆失败")
 
 
+def check_empty(startime,endtime):
+    # 查询空座
+    room_id = '100457211'
+    date = time.strftime("%Y-%m-%d", time.localtime())
+
+    _url = get_room_status_url.format(room_id, date, startime, endtime)
+    response = evil_session.get(_url)
+    data = json.loads(response.text)
+
+    if data['ret'] == 1:
+        seats = data['data']
+        for seat in seats:
+            if len(seat['ts']) == 0:
+                print("找到空座:" + seat['devName'])
+                return str(seat['id']).split('_')[0]
+
+
 if __name__ == '__main__':
+    if len(sys.argv)>1:
+        if sys.argv[1] == '-o':
+            login()
+            print("正在占座，时间：{}->{}".format(sys.argv[2], sys.argv[3]))
+            try:
+                seat_id = check_empty(sys.argv[2], sys.argv[3])
+                occupy(seat_id, sys.argv[2], sys.argv[3])
+            except:
+                pass
+        else:
+            print(sys.argv)
+    else:
+        check_empty('18:00', '22:00')
+
+
+    '''
     login()
     resv_info = get_resv_info()
     print(resv_info)
@@ -112,4 +146,4 @@ if __name__ == '__main__':
     print("正在占座...")
     # occupy("15:00", "16:30")
     delet_seat()
-
+'''
