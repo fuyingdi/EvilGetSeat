@@ -40,7 +40,7 @@ def sendmail(subject, content):
 
 def job_get_seat():
     # 时间是否在6:00-22:00
-    if time.localtime(time.time()) <= 5 or time.localtime(time.time())>= 22:
+    if time.localtime(time.time()).tm_hour <= 5 or time.localtime(time.time()).tm_hour >= 22:
         pass
     else:
         global start_time
@@ -54,7 +54,7 @@ def job_get_seat():
 
 def job_cancel_seat():
     # 时间是否在6:00-22:00
-    if time.localtime(time.time()) <= 7 or time.localtime(time.time()) >= 22:
+    if time.localtime(time.time()).tm_hour <= 7 or time.localtime(time.time()).tm_hour >= 22:
         pass
     else:
         util.delet_seat()
