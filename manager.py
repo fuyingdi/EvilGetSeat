@@ -9,6 +9,8 @@ from email.header import Header
 
 import traceback
 
+import random
+
 mail_host="smtp.qq.com"  # 设置服务器
 mail_user="719309759"    # 用户名
 mail_pass="svxdbzghgfrtbdih"   # 授权码
@@ -39,6 +41,7 @@ def sendmail(subject, content):
 
 
 def job_get_seat():
+    time.sleep(random.randint(0, 10)*60+random.randint(60))
     # 时间是否在6:00-22:00
     if time.localtime(time.time()).tm_hour <= 5 or time.localtime(time.time()).tm_hour >= 22:
         pass
@@ -53,17 +56,19 @@ def job_get_seat():
 
 
 def job_cancel_seat():
+    time.sleep(random.randint(0, 10)*60+random.randint(60))
     # 时间是否在6:00-22:00
     if time.localtime(time.time()).tm_hour <= 7 or time.localtime(time.time()).tm_hour >= 22:
         pass
     else:
+        util.login()
         util.delet_seat()
         sendmail('已取消预约', '')
 
 
 def start():
-    schedule.every().hour.at(':31').to(':40').do(job_cancel_seat())
-    schedule.every().day.at(":05").to(":15").do(job_cancel_seat())
+    schedule.every().hour.at(":31").do(job_cancel_seat)
+    schedule.every().hour.at(":01").do(job_cancel_seat)
     while True:
         schedule.run_pending()
 

@@ -43,18 +43,15 @@ evil_session = requests.Session()
 
 def login():
     # 登录
-    if relogin():
+    data = evil_session.get(login_url)
+    with open('data.txt', 'w+') as datafile:
+        datafile.write(str(data.text))
+    data = json.loads(data.text)
+    if data['ret'] == 1:
+        print('登录成功')
         return True
     else:
-        data = evil_session.get(login_url)
-        with open('data.txt', 'w+') as datafile:
-            datafile.write(str(data.text))
-        data = json.loads(data.text)
-        if data['ret'] == 1:
-            print('登录成功')
-            return True
-        else:
-            return False
+        return False
 
 
 def relogin():
@@ -101,14 +98,15 @@ def occupy(seat_id, start_time, end_time):
 def delet_seat():
     # 删除当前的预约
     print("尝试删除预约...")
-    resv_id = get_resv_info()
-    _del_resv_url = del_resv_url.format(resv_id)
+    try:
+        resv_id = get_resv_info()
+        _del_resv_url = del_resv_url.format(resv_id)
 
-    # 刷新登陆状态
-    if relogin():
-        response = evil_session.get(_del_resv_url)
-        print(response.text)
-    else:
+        # 刷新登陆状态
+        if relogin():
+            response = evil_session.get(_del_resv_url)
+            print(response.text)
+    except:
         print("重新登陆失败")
 
 
