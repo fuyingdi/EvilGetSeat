@@ -43,14 +43,18 @@ evil_session = requests.Session()
 
 def login():
     # 登录
-    data = evil_session.get(login_url)
-    with open('data.txt', 'w+') as datafile:
-        datafile.write(str(data.text))
-    data = json.loads(data.text)
-    if data['ret'] == 1:
-        print('登录成功')
+    if relogin():
+        return True
     else:
-        return False
+        data = evil_session.get(login_url)
+        with open('data.txt', 'w+') as datafile:
+            datafile.write(str(data.text))
+        data = json.loads(data.text)
+        if data['ret'] == 1:
+            print('登录成功')
+            return True
+        else:
+            return False
 
 
 def relogin():
@@ -88,7 +92,10 @@ def occupy(seat_id, start_time, end_time):
     response = evil_session.get(occupy_url.format(dev_id=dev_id, lab_id=lab_id, start=start, end=end, resv_id=resv_id))
     print(response.text)
     response = json.loads(response.text)
-    pprint.pprint(response)
+    if response['ret'] == 1:
+        return True
+    else:
+        return False
 
 
 def delet_seat():
