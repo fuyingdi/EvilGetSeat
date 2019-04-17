@@ -41,7 +41,7 @@ def sendmail(subject, content):
 
 
 def job_get_seat():
-    time.sleep(random.randint(0, 10)*60+random.randint(60))
+    time.sleep(random.randint(0, 10)*60+random.randint(0, 60))
     # 时间是否在6:00-22:00
     if time.localtime(time.time()).tm_hour <= 5 or time.localtime(time.time()).tm_hour >= 22:
         pass
@@ -56,7 +56,7 @@ def job_get_seat():
 
 
 def job_cancel_seat():
-    time.sleep(random.randint(0, 10)*60+random.randint(60))
+    time.sleep(random.randint(0, 10)*60+random.randint(0, 60))
     # 时间是否在6:00-22:00
     if time.localtime(time.time()).tm_hour <= 7 or time.localtime(time.time()).tm_hour >= 22:
         pass
