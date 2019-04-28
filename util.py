@@ -58,6 +58,7 @@ def relogin():
     # 刷新登陆状态，若不成功，重新登陆
     data = evil_session.get(relogin_url)
     data = json.loads(data.text)
+    print(data)
     if data['ret'] == 1:
         print("刷新登陆状态成功")
         return True
@@ -73,9 +74,12 @@ def relogin():
 def get_resv_info():
     _data = evil_session.get(get_resvid_url)
     _data = json.loads(_data.text)
-    print(_data)
     if _data['ret'] == 1:
-        return _data['data'][0]['id']
+        if len(_data['data']) > 0:
+            result = _data['data'][0]
+            return result
+        else:
+            return None
 
 
 # 占座
@@ -99,11 +103,15 @@ def delet_seat():
     # 删除当前的预约
     print("尝试删除预约...")
     try:
-        resv_id = get_resv_info()
+        resv_id = get_resv_info()['id']
         _del_resv_url = del_resv_url.format(resv_id)
 
         # 刷新登陆状态
         if relogin():
+            response = evil_session.get(_del_resv_url)
+            print(response.text)
+        else:
+            login()
             response = evil_session.get(_del_resv_url)
             print(response.text)
     except:
